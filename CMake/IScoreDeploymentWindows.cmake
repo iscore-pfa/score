@@ -46,11 +46,11 @@ install(FILES
   "${QT_DLL_DIR}/Qt5Help${DEBUG_CHAR}.dll"
   "${QT_DLL_DIR}/Qt5Multimedia${DEBUG_CHAR}.dll"
   DESTINATION "${SCORE_BIN_INSTALL_DIR}")
-install(
-  DIRECTORY
-    "${CMAKE_BINARY_DIR}/Ressources"
-  DESTINATION
-    ${SCORE_BIN_INSTALL_DIR})
+# install(
+#   DIRECTORY
+#     "${CMAKE_BINARY_DIR}/Ressources"
+#   DESTINATION
+#     ${SCORE_BIN_INSTALL_DIR})
 
 # Qt conf file
 install(
@@ -120,7 +120,8 @@ SetOutPath '\\\$INSTDIR'
 CreateShortcut '\\\$DESKTOP\\\\segment.lnk' '\\\$INSTDIR\\\\segment-editor.exe' '' '\\\$INSTDIR\\\\score.ico'
 SetRegView 64
 WriteRegStr HKEY_LOCAL_MACHINE 'SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\App Paths\\\\segment-editor.exe' '' '$INSTDIR\\\\segment-editor.exe'
-WriteRegStr HKEY_LOCAL_MACHINE 'SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\App Paths\\\\segment-editor.exe' 'Path' '$INSTDIR\\\\;$INSTDIR\\\\plugins\\\\;'
+
+AccessControl::GrantOnFile '\\\$INSTDIR' '(S-1-5-32-545)' 'FullAccess'
 ")
 set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
 Delete '$DESKTOP\\\\score.lnk'

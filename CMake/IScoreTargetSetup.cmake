@@ -28,7 +28,7 @@ function(score_cotire_pre TheTarget)
 endfunction()
 
 function(score_cotire_post TheTarget)
-if(SCORE_COTIRE)
+if(SCORE_COTIRE AND NOT MSVC)
    cotire(${TheTarget})
 endif()
 endfunction()
@@ -47,8 +47,8 @@ endfunction()
 
 ### Initialization of most common stuff ###
 
-function(score_set_msvc_compile_options theTarget)
-    target_compile_options(${theTarget} PUBLIC
+function(score_set_msvc_compile_options TheTarget)
+    target_compile_options(${TheTarget} PUBLIC
 #    "/Za"
     "-wd4180"
     "-wd4224"
@@ -63,19 +63,19 @@ function(score_set_msvc_compile_options theTarget)
     "-std:c++latest"
     )
 
-    target_compile_definitions(${theTarget} PUBLIC
+    target_compile_definitions(${TheTarget} PUBLIC
         "NOMINMAX"
 #        "__cpp_constexpr=201304"
 #        "__cpp_variable_templates=201304"
         )
 endfunction()
 
-function(score_set_apple_compile_options theTarget)
+function(score_set_apple_compile_options TheTarget)
 endfunction()
 
-function(score_set_gcc_compile_options theTarget)
+function(score_set_gcc_compile_options TheTarget)
     # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wno-error=shadow -Wno-error=switch -Wno-error=switch-enum -Wno-error=empty-body -Wno-error=overloaded-virtual -Wno-error=suggest-final-methods -Wno-error=suggest-final-types -Wno-error=suggest-override -Wno-error=maybe-uninitialized")
-        target_compile_options(${theTarget} PUBLIC
+        target_compile_options(${TheTarget} PUBLIC
           -Wno-div-by-zero
           -Wsuggest-final-types
           -Wsuggest-final-methods
@@ -91,7 +91,7 @@ function(score_set_gcc_compile_options theTarget)
           )
 
       if(NOT SCORE_SANITIZE)
-      target_compile_options(${theTarget} PUBLIC
+      target_compile_options(${TheTarget} PUBLIC
           "$<$<CONFIG:Release>:-ffunction-sections>"
           "$<$<CONFIG:Release>:-fdata-sections>"
           "$<$<CONFIG:Release>:-Wl,--gc-sections>"
@@ -100,7 +100,7 @@ function(score_set_gcc_compile_options theTarget)
       )
 
     if(SCORE_SPLIT_DEBUG)
-      target_link_libraries(${theTarget} PUBLIC
+      target_link_libraries(${TheTarget} PUBLIC
         #          "$<$<CONFIG:Debug>:-Wa,--compress-debug-sections>"
         #          "$<$<CONFIG:Debug>:-Wl,--compress-debug-sections=zlib>"
                   "$<$<CONFIG:Debug>:-fvar-tracking-assignments>"
@@ -108,16 +108,16 @@ function(score_set_gcc_compile_options theTarget)
         )
     endif()
 
-      get_target_property(NO_LTO ${theTarget} SCORE_TARGET_NO_LTO)
+      get_target_property(NO_LTO ${TheTarget} SCORE_TARGET_NO_LTO)
       if(NOT ${NO_LTO})
-          target_compile_options(${theTarget} PUBLIC
+          target_compile_options(${TheTarget} PUBLIC
 #            "$<$<BOOL:${SCORE_ENABLE_LTO}>:-s>"
 #            "$<$<BOOL:${SCORE_ENABLE_LTO}>:-flto>"
 #            "$<$<BOOL:${SCORE_ENABLE_LTO}>:-fuse-linker-plugin>"
 #            "$<$<BOOL:${SCORE_ENABLE_LTO}>:-fno-fat-lto-objects>"
           )
       endif()
-      target_link_libraries(${theTarget} PUBLIC
+      target_link_libraries(${TheTarget} PUBLIC
           "$<$<CONFIG:Release>:-ffunction-sections>"
           "$<$<CONFIG:Release>:-fdata-sections>"
           "$<$<CONFIG:Release>:-Wl,--gc-sections>"
@@ -131,7 +131,7 @@ function(score_set_gcc_compile_options theTarget)
 #          "$<$<BOOL:${SCORE_ENABLE_LTO}>:-fno-fat-lto-objects>"
           )
         if(SCORE_SPLIT_DEBUG)
-          target_link_libraries(${theTarget} PUBLIC
+          target_link_libraries(${TheTarget} PUBLIC
             #          "$<$<CONFIG:Debug>:-Wa,--compress-debug-sections>"
             #          "$<$<CONFIG:Debug>:-Wl,--compress-debug-sections=zlib>"
           "$<$<CONFIG:Debug>:-gsplit-dwarf>"
@@ -147,8 +147,8 @@ function(score_set_gcc_compile_options theTarget)
       # Too much clutter :set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wswitch-enum -Wshadow  -Wsuggest-attribute=const  -Wsuggest-attribute=pure ")
 endfunction()
 
-function(score_set_clang_compile_options theTarget)
-    target_compile_options(${theTarget} PUBLIC
+function(score_set_clang_compile_options TheTarget)
+    target_compile_options(${TheTarget} PUBLIC
         -Wno-gnu-string-literal-operator-template
         -Wno-missing-braces
         -Werror=return-stack-address
@@ -163,31 +163,31 @@ function(score_set_clang_compile_options theTarget)
     #endif()
 endfunction()
 
-function(score_set_linux_compile_options theTarget)
-    use_gold(${theTarget})
+function(score_set_linux_compile_options TheTarget)
+    use_gold(${TheTarget})
 
     if(NOT SCORE_SANITIZE AND LINKER_IS_GOLD AND SCORE_SPLIT_DEBUG)
-        target_compile_options(${theTarget} PUBLIC
+        target_compile_options(${TheTarget} PUBLIC
             # Debug options
             "$<$<CONFIG:Debug>:-gsplit-dwarf>")
     endif()
-    target_compile_options(${theTarget} PUBLIC
+    target_compile_options(${TheTarget} PUBLIC
         # Debug options
         "$<$<CONFIG:Debug>:-ggdb>"
         "$<$<CONFIG:Debug>:-O0>")
-    target_link_libraries(${theTarget} PUBLIC
+    target_link_libraries(${TheTarget} PUBLIC
         # Debug options
         "$<$<CONFIG:Debug>:-ggdb>"
         "$<$<CONFIG:Debug>:-O0>")
 endfunction()
 
-function(score_set_unix_compile_options theTarget)
+function(score_set_unix_compile_options TheTarget)
     # General options
 
     #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wabi -Wctor-dtor-privacy -Wnon-virtual-dtor -Wreorder -Wstrict-null-sentinel -Wno-non-template-friend -Woverloaded-virtual -Wno-pmf-conversions -Wsign-promo -Wextra -Wall -Waddress -Waggregate-return -Warray-bounds -Wno-attributes -Wno-builtin-macro-redefined")
     #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wc++0x-compat -Wcast-align -Wcast-qual -Wchar-subscripts -Wclobbered -Wcomment -Wconversion -Wcoverage-mismatch -Wno-deprecated -Wno-deprecated-declarations -Wdisabled-optimization -Wno-div-by-zero -Wempty-body -Wenum-compare")
 
-    target_compile_options(${theTarget} PUBLIC
+    target_compile_options(${TheTarget} PUBLIC
     -Wall
     -Wextra
     -Wno-unused-parameter
@@ -209,13 +209,13 @@ function(score_set_unix_compile_options theTarget)
     "$<$<AND:$<CONFIG:Release>,$<BOOL:${SCORE_ENABLE_OPTIMIZE_CUSTOM}>>:-march=native>"
     )
 
-    target_link_libraries(${theTarget} PUBLIC
+    target_link_libraries(${TheTarget} PUBLIC
         "$<$<CONFIG:Release>:-Ofast>"
         "$<$<CONFIG:Release>:-fno-finite-math-only>"
         "$<$<AND:$<CONFIG:Release>,$<BOOL:${SCORE_ENABLE_OPTIMIZE_CUSTOM}>>:-march=native>")
 endfunction()
 
-function(score_set_compile_options theTarget)
+function(score_set_compile_options TheTarget)
   #set_target_properties(${TheTarget} PROPERTIES CXX_STANDARD 17)
   target_compile_definitions(${TheTarget} PUBLIC
       $<$<CONFIG:Debug>:SCORE_DEBUG>
@@ -230,7 +230,7 @@ function(score_set_compile_options theTarget)
       $<$<BOOL:${DEPLOYMENT_BUILD}>:SCORE_DEPLOYMENT_BUILD>
       $<$<BOOL:${SCORE_STATIC_PLUGINS}>:SCORE_STATIC_PLUGINS>
       )
-  get_target_property(theType ${theTarget} TYPE)
+  get_target_property(theType ${TheTarget} TYPE)
 
   if(${theType} MATCHES STATIC_LIBRARY)
     target_compile_definitions(${TheTarget} PRIVATE
@@ -239,40 +239,40 @@ function(score_set_compile_options theTarget)
   endif()
 
   if(SCORE_SANITIZE)
-      get_target_property(NO_SANITIZE ${theTarget} SCORE_TARGET_NO_SANITIZE)
+      get_target_property(NO_SANITIZE ${TheTarget} SCORE_TARGET_NO_SANITIZE)
       if(NOT "${NO_SANITIZE}")
-          sanitize_build(${theTarget})
+          sanitize_build(${TheTarget})
       endif()
-      # debugmode_build(${theTarget})
+      # debugmode_build(${TheTarget})
   endif()
 
   if (CXX_IS_GCC OR CXX_IS_CLANG)
-    score_set_unix_compile_options(${theTarget})
+    score_set_unix_compile_options(${TheTarget})
   endif()
 
   if (CXX_IS_CLANG)
-      score_set_clang_compile_options(${theTarget})
+      score_set_clang_compile_options(${TheTarget})
   endif()
 
   if (CXX_IS_MSVC)
-      score_set_msvc_compile_options(${theTarget})
+      score_set_msvc_compile_options(${TheTarget})
   endif()
 
   if(CXX_IS_GCC)
-      score_set_gcc_compile_options(${theTarget})
+      score_set_gcc_compile_options(${TheTarget})
   endif()
 
   # OS X
   if(APPLE)
-      score_set_apple_compile_options(${theTarget})
+      score_set_apple_compile_options(${TheTarget})
   endif()
 
   # Linux
   if(NOT APPLE AND NOT WIN32)
-      score_set_linux_compile_options(${theTarget})
+      score_set_linux_compile_options(${TheTarget})
   endif()
 
-  # currently breaks build : add_linker_warnings(${theTarget})
+  # currently breaks build : add_linker_warnings(${TheTarget})
 endfunction()
 
 function(setup_score_common_features TheTarget)
