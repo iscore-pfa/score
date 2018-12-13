@@ -21,7 +21,7 @@ project(score LANGUAGES C CXX)
 cmake_policy(VERSION 3.9)
 cmake_policy(SET CMP0025 NEW)
 set(SCORE_VERSION_MAJOR 1)
-set(SCORE_VERSION_MINOR 5)
+set(SCORE_VERSION_MINOR 6)
 set(SCORE_VERSION_PATCH 0)
 set(SCORE_VERSION_EXTRA)
 set(SCORE_CODENAME "SEGMented")
@@ -118,6 +118,7 @@ set(SCORE_PLUGINS_LIST CACHE INTERNAL "List of plugins") # todo libraries, compo
 set(SCORE_GLOBAL_COMPONENTS_LIST CACHE INTERNAL "List of components") # todo libraries, components ?
 
 add_subdirectory(base)
+return()
 set(SCORE_TESTBED OFF)
 if(SCORE_TESTBED)
 add_subdirectory(Tests/testbed)
@@ -133,4 +134,3 @@ if(INTEGRATION_TESTING)
 endif()
 
 include(CTest)
-return()
