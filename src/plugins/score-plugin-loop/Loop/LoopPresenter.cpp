@@ -20,6 +20,7 @@
 #include <Scenario/Document/Event/EventPresenter.hpp>
 #include <Scenario/Document/Interval/Temporal/TemporalIntervalPresenter.hpp>
 #include <Scenario/Document/Interval/Temporal/TemporalIntervalView.hpp>
+#include <Scenario/Document/Interval/Temporal/TemporalIntervalHeader.hpp>
 #include <Scenario/Document/State/StatePresenter.hpp>
 #include <Scenario/Document/TimeSync/TimeSyncModel.hpp>
 #include <Scenario/Document/TimeSync/TimeSyncPresenter.hpp>
@@ -193,7 +194,7 @@ void LayerPresenter::setHeight(qreal height)
   if(N > 0)
   {
     const double totalSlotHeight = max_height / double(N);
-    const double slotContentHeight = totalSlotHeight - Scenario::IntervalHeader::headerHeight();
+    const double slotContentHeight = totalSlotHeight - Scenario::TemporalIntervalHeader::headerHeight();
     const double slotHeight = std::max(20., slotContentHeight);
 
     auto& itv = const_cast<Scenario::IntervalModel&>(c);

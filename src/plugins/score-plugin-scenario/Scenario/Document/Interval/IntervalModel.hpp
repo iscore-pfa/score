@@ -22,6 +22,7 @@
 #include <QString>
 #include <QVector>
 
+#include <Process/Dataflow/TimeSignature.hpp>
 #include <nano_signal_slot.hpp>
 #include <wobjectdefs.h>
 
@@ -31,7 +32,7 @@ class JSONObject;
 namespace Scenario
 {
 class StateModel;
-
+using TimeSignatureMap = ossia::fast_hash_map<TimeVal, Control::time_signature>;
 class SCORE_PLUGIN_SCENARIO_EXPORT IntervalModel final
     : public score::Entity<IntervalModel>,
       public Nano::Observer
@@ -44,6 +45,8 @@ class SCORE_PLUGIN_SCENARIO_EXPORT IntervalModel final
 
 public:
   std::unique_ptr<Process::Inlet> inlet;
+  std::unique_ptr<Process::Inlet> tempo;
+  std::unique_ptr<Process::Inlet> signature;
   std::unique_ptr<Process::Outlet> outlet;
 
   /** Properties of the class **/
@@ -96,8 +99,8 @@ public:
   void setSmallViewVisible(bool);
   bool smallViewVisible() const;
 
-  const Rack& smallView() const { return m_smallView; }
-  const FullRack& fullView() const { return m_fullView; }
+  const Rack& smallView() const noexcept { return m_smallView; }
+  const FullRack& fullView() const noexcept { return m_fullView; }
 
   void clearSmallView();
   void clearFullView();
@@ -132,8 +135,19 @@ public:
   const FullSlot& getFullViewSlot(int slot) const;
   FullSlot& getFullViewSlot(int slot);
 
-  bool muted() const { return m_muted; }
+  bool muted() const noexcept { return m_muted; }
   void setMuted(bool m);
+
+  bool hasTempo() const noexcept { return m_hasTempo; }
+  bool hasTimeSignature() const noexcept { return m_hasSignature; }
+
+  void setHasTempo(bool b);
+  void setHasTimeSignature(bool b);
+
+  void addSignature(TimeVal t, Control::time_signature sig);
+  void removeSignature(TimeVal t);
+  void setTimeSignatureMap(const TimeSignatureMap& map);
+  const TimeSignatureMap& timeSignatureMap() const noexcept { return m_signatures; }
 
 public:
   void heightPercentageChanged(double arg_1)
@@ -178,8 +192,16 @@ public:
 
   void mutedChanged(bool arg_1)
       E_SIGNAL(SCORE_PLUGIN_SCENARIO_EXPORT, mutedChanged, arg_1)
+  void hasTempoChanged(bool arg_1)
+      E_SIGNAL(SCORE_PLUGIN_SCENARIO_EXPORT, hasTempoChanged, arg_1)
+  void hasTimeSignatureChanged(bool arg_1)
+      E_SIGNAL(SCORE_PLUGIN_SCENARIO_EXPORT, hasTimeSignatureChanged, arg_1)
+  void timeSignaturesChanged(const TimeSignatureMap& arg_1)
+      E_SIGNAL(SCORE_PLUGIN_SCENARIO_EXPORT, timeSignaturesChanged, arg_1)
 
-  PROPERTY(double, muted READ muted WRITE setMuted NOTIFY mutedChanged)
+  PROPERTY(bool, muted READ muted WRITE setMuted NOTIFY mutedChanged)
+  PROPERTY(bool, tempo READ hasTempo WRITE setHasTempo NOTIFY hasTempoChanged)
+  PROPERTY(bool, timeSignature READ hasTimeSignature WRITE setHasTimeSignature NOTIFY hasTimeSignatureChanged)
   PROPERTY(
       double,
       heightPercentage READ heightPercentage WRITE setHeightPercentage NOTIFY
@@ -190,11 +212,10 @@ private:
   void on_removingProcess(const Process::ProcessModel&);
   void initConnections();
 
-  // Model for the full view.
-  // Note : it is also present in m_intervalViewModels.
-
   Rack m_smallView;
   FullRack m_fullView;
+
+  TimeSignatureMap m_signatures;
 
   Id<StateModel> m_startState;
   Id<StateModel> m_endState;
@@ -205,8 +226,11 @@ private:
   ZoomRatio m_zoom{-1};
   TimeVal m_center{};
   IntervalExecutionState m_executionState{};
-  bool m_smallViewShown{};
-  bool m_muted{};
+  bool m_smallViewShown : 1;
+  bool m_muted : 1;
+
+  bool m_hasTempo : 1;
+  bool m_hasSignature : 1;
 };
 
 SCORE_PLUGIN_SCENARIO_EXPORT
@@ -227,4 +251,7 @@ W_REGISTER_ARGTYPE(Path<Scenario::IntervalModel>)
 W_REGISTER_ARGTYPE(QPointer<const Scenario::IntervalModel>)
 W_REGISTER_ARGTYPE(Scenario::IntervalModel)
 W_REGISTER_ARGTYPE(Scenario::IntervalModel&)
+Q_DECLARE_METATYPE(Scenario::TimeSignatureMap)
+W_REGISTER_ARGTYPE(Scenario::TimeSignatureMap)
+
 TR_TEXT_METADATA(, Scenario::IntervalModel, PrettyName_k, "Interval")

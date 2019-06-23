@@ -29,6 +29,7 @@ class TemporalIntervalHeader final : public IntervalHeader
 public:
   TemporalIntervalHeader(TemporalIntervalPresenter& pres);
 
+  static constexpr double headerHeight() { return 21.; }
   QRectF boundingRect() const override;
   void paint(
       QPainter* painter,
@@ -39,6 +40,7 @@ public:
   void setSelected(bool b);
   void setExecuting(bool b);
   void setLabel(const QString& label);
+  void setWidth(double width);
 
 public:
   void doubleClicked() W_SIGNAL(doubleClicked);

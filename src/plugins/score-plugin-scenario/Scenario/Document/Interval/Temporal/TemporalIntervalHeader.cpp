@@ -57,9 +57,9 @@ TemporalIntervalHeader::TemporalIntervalHeader(TemporalIntervalPresenter& pres)
 QRectF TemporalIntervalHeader::boundingRect() const
 {
   if(Q_UNLIKELY(m_overlay))
-    return {0., 0., m_width, qreal(IntervalHeader::headerHeight())};
+    return {0., 0., m_width, qreal(TemporalIntervalHeader::headerHeight())};
   else
-    return {5., 0., m_width - 10., qreal(IntervalHeader::headerHeight())};
+    return {5., 0., m_width - 10., qreal(TemporalIntervalHeader::headerHeight())};
 }
 
 void TemporalIntervalHeader::paint(
@@ -118,7 +118,7 @@ void TemporalIntervalHeader::paint(
 
   const auto p = QPointF{
       m_previous_x + rack_button_offset,
-      -1. + (IntervalHeader::headerHeight() - m_textRectCache.height()) / 2.};
+      -1. + (TemporalIntervalHeader::headerHeight() - m_textRectCache.height()) / 2.};
 
   if(moved)
     updateButtons();
@@ -280,6 +280,15 @@ void TemporalIntervalHeader::setLabel(const QString& label)
   on_textChanged();
 }
 
+void TemporalIntervalHeader::setWidth(double width)
+{
+  prepareGeometryChange();
+  m_width = width;
+  if (this->cursor().shape() != openCursor().shape())
+    this->setCursor(openCursor());
+  update();
+}
+
 void TemporalIntervalHeader::mouseDoubleClickEvent(
       QGraphicsSceneMouseEvent* event)
 {
@@ -305,10 +314,10 @@ void TemporalIntervalHeader::updateShape() noexcept
   if(m_speed)
     buttons_width += m_speed->boundingRect().width();
 
-  m_poly << QPointF{0., qreal(IntervalHeader::headerHeight()) - 0.5}
+  m_poly << QPointF{0., qreal(TemporalIntervalHeader::headerHeight()) - 0.5}
          << QPointF{5., 0.}
          << QPointF{m_previous_x + text_width + buttons_width, 0.}
-         << QPointF{m_previous_x + text_width + buttons_width + 5., qreal(IntervalHeader::headerHeight()) - 0.5};
+         << QPointF{m_previous_x + text_width + buttons_width + 5., qreal(TemporalIntervalHeader::headerHeight()) - 0.5};
 }
 
 void TemporalIntervalHeader::setState(IntervalHeader::State s)

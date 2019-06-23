@@ -61,7 +61,7 @@ TemporalIntervalPresenter::TemporalIntervalPresenter(
     , endEvent{end}
     , m_handles{handles}
 {
-  m_header->setPos(5, -IntervalHeader::headerHeight());
+  m_header->setPos(5, -TemporalIntervalHeader::headerHeight());
   TemporalIntervalView& v = *view();
   auto head = header();
   con(v,
@@ -659,7 +659,7 @@ void TemporalIntervalPresenter::updatePositions()
 {
   using namespace std;
   // Vertical shape
-  m_view->setHeight(rackHeight() + IntervalHeader::headerHeight());
+  m_view->setHeight(rackHeight() + TemporalIntervalHeader::headerHeight());
 
   // Set the slots position graphically in order.
   qreal currentSlotY = 1.;
@@ -928,7 +928,7 @@ void TemporalIntervalPresenter::on_defaultDurationChanged(const TimeVal& val)
   const auto w = val.toPixels(m_zoomRatio);
   m_view->setDefaultWidth(w);
   m_view->updateCounterPos();
-  m_header->setWidth(w - 10.);
+  ((TemporalIntervalHeader*)m_header)->setWidth(w - 10.);
   ((TemporalIntervalHeader*)m_header)->updateButtons();
   ((TemporalIntervalHeader*)m_header)->update();
   updateBraces();

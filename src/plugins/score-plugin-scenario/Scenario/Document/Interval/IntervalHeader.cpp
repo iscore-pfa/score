@@ -9,23 +9,15 @@
 class QGraphicsSceneMouseEvent;
 namespace Scenario
 {
-static const QCursor& openCursor()
+const QCursor& openCursor()
 {
   static const QCursor c{Qt::OpenHandCursor};
   return c;
 }
-static const QCursor& closedCursor()
+const QCursor& closedCursor()
 {
   static const QCursor c{Qt::ClosedHandCursor};
   return c;
-}
-void IntervalHeader::setWidth(double width)
-{
-  prepareGeometryChange();
-  m_width = width;
-  if (this->cursor().shape() != openCursor().shape())
-    this->setCursor(openCursor());
-  update();
 }
 
 void IntervalHeader::mousePressEvent(QGraphicsSceneMouseEvent* event)

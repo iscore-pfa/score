@@ -69,7 +69,7 @@ FullViewIntervalPresenter::FullViewIntervalPresenter(
     QObject* parent)
     : IntervalPresenter{interval,
                         new FullViewIntervalView{*this, parentobject},
-                        new FullViewIntervalHeader{ctx, parentobject},
+                        new FullViewIntervalHeader{*this, ctx, parentobject},
                         ctx,
                         parent}
 {
@@ -357,10 +357,10 @@ void FullViewIntervalPresenter::updatePositions()
 {
   using namespace std;
   // Vertical shape
-  m_view->setHeight(rackHeight() + IntervalHeader::headerHeight());
+  m_view->setHeight(rackHeight() + FullViewIntervalHeader::headerHeight());
 
   // Set the slots position graphically in order.
-  qreal currentSlotY = IntervalHeader::headerHeight();
+  qreal currentSlotY = FullViewIntervalHeader::headerHeight();
 
   for (int i = 0; i < (int)m_slots.size(); i++)
   {
@@ -512,7 +512,7 @@ int FullViewIntervalPresenter::indexOfSlot(const Process::LayerPresenter& p)
 void FullViewIntervalPresenter::on_guiDurationChanged(const TimeVal& val)
 {
   const auto w = val.toPixels(m_zoomRatio);
-  m_header->setWidth(w);
+  ((FullViewIntervalHeader*)m_header)->setWidth(w);
 
   static_cast<FullViewIntervalView*>(m_view)->setGuiWidth(w);
   for (const SlotPresenter& slot : m_slots)
@@ -525,7 +525,7 @@ void FullViewIntervalPresenter::on_guiDurationChanged(const TimeVal& val)
 
 void FullViewIntervalPresenter::updateHeight()
 {
-  m_view->setHeight(rackHeight() + IntervalHeader::headerHeight());
+  m_view->setHeight(rackHeight() + FullViewIntervalHeader::headerHeight());
 
   updateChildren();
   heightChanged();

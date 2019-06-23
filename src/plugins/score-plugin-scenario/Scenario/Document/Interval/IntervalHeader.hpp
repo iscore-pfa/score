@@ -29,9 +29,7 @@ public:
   int type() const override { return static_type(); }
 
   void setIntervalView(IntervalView* view) { m_view = view; }
-  static constexpr double headerHeight() { return IntervalHeaderHeight; }
 
-  void setWidth(double width);
   virtual void setState(State s) = 0;
   State state() const noexcept { return m_state; }
 
@@ -47,4 +45,6 @@ protected:
   State m_state{};
   double m_width{};
 };
+const QCursor& openCursor();
+const QCursor& closedCursor();
 }

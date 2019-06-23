@@ -262,5 +262,15 @@ struct is_custom_serialized<TimeVal> : std::true_type
 {
 };
 
+namespace std
+{
+template <>
+struct hash<TimeVal>
+{
+  std::size_t operator()(const TimeVal& t) const { return qHash(t.msec()); }
+};
+}
+
+
 Q_DECLARE_METATYPE(TimeVal)
 W_REGISTER_ARGTYPE(TimeVal)
