@@ -5,6 +5,7 @@
 #include <score/application/ApplicationContext.hpp>
 
 #include <QIODevice>
+
 #include <stdexcept>
 
 template <typename T>

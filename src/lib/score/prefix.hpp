@@ -4,7 +4,7 @@
 #pragma GCC system_header
 #pragma clang system_header
 
-////////
+//////////
 #include <score/command/AggregateCommand.hpp>
 #include <score/model/EntityImpl.hpp>
 #include <score/model/path/Path.hpp>
@@ -21,10 +21,11 @@
 #include <ossia/detail/small_vector.hpp>
 #include <ossia/detail/string_map.hpp>
 
-#include <QWidget>
 #include <QGraphicsItem>
+#include <QWidget>
 
 #include <cmath>
+#include <wobjectimpl.h>
 
 #include <array>
 #include <cstdint>
@@ -34,7 +35,5 @@
 #include <string>
 #include <utility>
 #include <vector>
-
 #include <verdigris>
-#include <wobjectimpl.h>
 #endif
