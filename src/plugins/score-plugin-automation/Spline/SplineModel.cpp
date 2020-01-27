@@ -21,15 +21,17 @@ ProcessModel::ProcessModel(
                             parent}
     , outlet{Process::make_value_outlet(Id<Process::Port>(0), this)}
 {
-  m_spline.points.push_back({0., 0.});
 
-  m_spline.points.push_back({0.4, 0.075});
-  m_spline.points.push_back({0.45, 0.24});
-  m_spline.points.push_back({0.5, 0.5});
 
-  m_spline.points.push_back({0.55, 0.76});
-  m_spline.points.push_back({0.7, 0.9});
-  m_spline.points.push_back({1.0, 1.0});
+
+  m_spline.points.push_back({0.00, 0.00, 0.0});
+  m_spline.points.push_back({0.00, 0.00, 0.0});
+  m_spline.points.push_back({0.5, 1.0,  1.0});
+  m_spline.points.push_back({0.5, 1.0,  1.0});
+
+  m_spline.points.push_back({1.0, 0.0,  0.0});
+  m_spline.points.push_back({1.0, 0.0,  0.0});
+  // m_spline.points.push_back({0.50, 0.50, 0.8});
 
   init();
   metadata().setInstanceName(*this);
@@ -110,18 +112,18 @@ void ProcessModel::setUnit(const State::Unit& u)
 template <>
 void DataStreamReader::read(const ossia::nodes::spline_point& autom)
 {
-  m_stream << autom.m_x << autom.m_y;
+  m_stream << autom.m_x << autom.m_y << autom.m_z;
 }
 
 template <>
 void DataStreamWriter::write(ossia::nodes::spline_point& autom)
 {
-  m_stream >> autom.m_x >> autom.m_y;
+  m_stream >> autom.m_x >> autom.m_y >> autom.m_z;
 }
 template <>
 void JSONValueReader::read(const ossia::nodes::spline_point& autom)
 {
-  val = QJsonArray{autom.x(), autom.y()};
+  val = QJsonArray{autom.x(), autom.y(), autom.z()};
 }
 
 template <>
@@ -130,6 +132,7 @@ void JSONValueWriter::write(ossia::nodes::spline_point& autom)
   auto arr = val.toArray();
   autom.m_x = arr[0].toDouble();
   autom.m_y = arr[1].toDouble();
+  autom.m_z = arr[2].toDouble();
 }
 
 /// Data ///
