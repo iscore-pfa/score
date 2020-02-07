@@ -30,6 +30,8 @@ LayerView::~LayerView()
 }
 void LayerView::heightChanged(qreal) {}
 void LayerView::widthChanged(qreal) {}
+void LayerView::depthChanged(qreal) {}
+
 
 MiniLayer::~MiniLayer() = default;
 
@@ -54,7 +56,7 @@ void LayerView::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 
 QRectF LayerView::boundingRect() const
 {
-  return {0, 0, m_width, m_height};
+  return {0, 0, 0, m_width, m_height, m_depth};
 }
 
 void LayerView::paint(
@@ -87,6 +89,16 @@ void LayerView::setWidth(qreal width) noexcept
     prepareGeometryChange();
     m_width = width;
     widthChanged(width);
+  }
+}
+
+void LayerView::setDepth(qreal depth) noexcept
+{
+  if (depth != m_depth)
+  {
+    prepareGeometryChange();
+    m_depth = depth;
+    depthChanged(depth);
   }
 }
 
@@ -166,7 +178,7 @@ MiniLayer::MiniLayer(QGraphicsItem* parent) : QGraphicsItem{parent}
 
 QRectF MiniLayer::boundingRect() const
 {
-  return {0, 0, m_width, m_height};
+  return {0, 0, 0, m_width, m_height, m_depth};
 }
 
 void MiniLayer::paint(
@@ -199,6 +211,18 @@ void MiniLayer::setWidth(qreal width)
 qreal MiniLayer::width() const
 {
   return m_width;
+}
+
+void MiniLayer::setDepth(qreal depth)
+{
+  prepareGeometryChange();
+  m_depth = depth;
+  update();
+}
+
+qreal MiniLayer::depth() const
+{
+  return m_depth;
 }
 
 void MiniLayer::setZoomRatio(qreal z)

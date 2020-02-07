@@ -35,6 +35,7 @@ class SCORE_LIB_PROCESS_EXPORT LayerView : public QObject, public QGraphicsItem
   void setWidth(qreal width) noexcept;
   qreal width() const noexcept { return m_width; }
 
+
   virtual QPixmap pixmap() noexcept;
 
   void dragEnterEvent(QGraphicsSceneDragDropEvent* event) override;
@@ -81,6 +82,7 @@ protected:
   virtual void heightChanged(qreal);
   virtual void widthChanged(qreal);
 
+
   void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
   void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
@@ -92,6 +94,7 @@ private:
   qreal m_height{};
   qreal m_width{};
   bool m_dropPresetOverlay{false};
+
 };
 
 class SCORE_LIB_PROCESS_EXPORT MiniLayer : public QGraphicsItem
@@ -113,6 +116,7 @@ public:
 
   void setWidth(qreal width);
   qreal width() const;
+
 
   void setZoomRatio(qreal);
   qreal zoom() const;

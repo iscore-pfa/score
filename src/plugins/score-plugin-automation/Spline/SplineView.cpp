@@ -23,7 +23,7 @@ View::View(QGraphicsItem* parent) : LayerView{parent}
 
 ossia::nodes::spline_point View::mapFromCanvas(const QPointF& point) const
 {
-  return ossia::nodes::spline_point{(double)point.x() / width(), 1. - point.y() / height()};
+  return ossia::nodes::spline_point{(double)point.x() / width(), 1. - point.y() / height(), 1. - point.z() / depth()};
 }
 
 void View::paint_impl(QPainter* p) const

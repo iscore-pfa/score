@@ -40,7 +40,7 @@ private:
   template <typename T>
   QPointF mapToCanvas(const T& point) const
   {
-    return QPointF(point.x() * width(), height() - point.y() * height());
+    return QPointF(point.x() * width(), height() - point.y() * height(), depth() - point.z() * depth());
   }
   ossia::nodes::spline_point mapFromCanvas(const QPointF& point) const;
 
