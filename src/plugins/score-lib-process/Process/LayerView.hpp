@@ -95,6 +95,7 @@ private:
   qreal m_width{};
   bool m_dropPresetOverlay{false};
 
+
 };
 
 class SCORE_LIB_PROCESS_EXPORT MiniLayer : public QGraphicsItem
@@ -116,7 +117,6 @@ public:
 
   void setWidth(qreal width);
   qreal width() const;
-
 
   void setZoomRatio(qreal);
   qreal zoom() const;
